@@ -24,7 +24,7 @@ import java.nio.Buffer;
 /**
  * Created by DARSHAN on 04-09-2016.
  */
-class BackgroundTask extends  {
+class BackgroundTask extends AsyncTask <String,Void,String> {
 
     Context context;
     private Dialog loadingDialog;
