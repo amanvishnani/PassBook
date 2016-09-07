@@ -73,7 +73,7 @@ class BackgroundTask extends AsyncTask <String,Void,String> {
             }
             result = sb.toString();
             reader.close();
-            is.close();
+
 
 
         } catch (ClientProtocolException e) {
