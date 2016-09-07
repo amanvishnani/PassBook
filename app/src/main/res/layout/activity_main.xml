@@ -1,0 +1,62 @@
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bluehd"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="30dp"
+        android:hint="Text"
+        android:id="@+id/etText"
+                android:background="@drawable/border"
+        android:typeface="monospace"
+        android:textColorLink="#1a3fc3" />
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="30dp"
+        android:hint="Key"
+        android:layout_below="@+id/etText"
+        android:id="@+id/etKey"
+        android:background="@drawable/border"
+        android:typeface="monospace"
+        android:textColorLink="#1a3fc3" />
+
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="Encrypt"
+        android:background="@drawable/nullback"
+        android:id="@+id/btnEncrypt"
+        android:layout_below="@+id/etKey"
+        android:textColor="#ffffff"
+        android:onClick="eData"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="35dp"
+
+        />
+
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="Dencrypt"
+        android:background="@drawable/nullback"
+        android:id="@+id/btnDecrypt"
+        android:layout_below="@+id/etKey"
+        android:textColor="#ffffff"
+        android:onClick="dData"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="235dp"
+
+        />
+
+    </RelativeLayout>

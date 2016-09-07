@@ -1,0 +1,102 @@
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/blue"
+
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout android:layout_width="match_parent"
+        android:layout_height="200dp"
+
+        android:layout_margin="10dp"
+        android:id="@+id/rlId"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="PassBook"
+    android:textSize="50dp"
+    android:layout_centerInParent="true"
+    android:textStyle="bold"
+    android:gravity="center"
+    android:id="@+id/tvPassbook"
+    android:fontFamily="sans-serif-smallcaps"
+    android:textColor="#FFFFFF"
+    />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LOGIN"
+            android:textSize="30dp"
+            android:layout_centerInParent="false"
+            android:layout_below="@+id/tvPassbook"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:fontFamily="sans-serif-smallcaps"
+            android:textColor="#a70000"
+            />
+
+    </RelativeLayout>
+
+
+    <EditText
+        android:textColorHint="#000000"
+        android:id="@+id/etUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rlId"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/border"
+        android:fontFamily="sans-serif-smallcaps"
+        android:hint="Username"
+        android:lines="1"
+        android:maxLength="10"
+        android:textSize="20dp" />
+
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etUsername"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/border"
+        android:fontFamily="sans-serif-smallcaps"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:lines="1"
+        android:maxLength="10"
+        android:textColorHint="#000000"
+        android:textSize="20dp" />
+
+    <Button
+        android:background="#5a9ae7"
+        android:layout_width="90dp"
+        android:layout_height="40dp"
+        android:textColorHighlight="#5a9ae7"
+
+        android:text="Login"
+        android:onClick="login"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-smallcaps"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="12dp"
+        android:id="@+id/btnLogin"
+        android:layout_below="@+id/etPassword"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="dont have account? create one"
+        android:layout_toRightOf="@+id/btnLogin"
+        android:layout_marginTop="379dp"
+        android:layout_marginLeft="12dp"
+        android:id="@+id/tvRegistration"
+        android:onClick="registration"
+        />
+
+</RelativeLayout>
