@@ -7,6 +7,13 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -44,18 +51,11 @@ class BackgroundTask extends AsyncTask <String,Void,String> {
     protected String doInBackground(String... params) {
         String uname = params[0];
         String pass = params[1];
-
         InputStream is = null;
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("username", uname));
-        nameValuePairs.add(new BasicNameValuePair("password", pass));
-        String result = null;
-
-        try {
+        String result="";
+        try{
             HttpClient httpClient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(
-                    "http://simplifiedcoding.16mb.com/login.php");
-            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            HttpPost httpPost = new HttpPost("http://192.168.1.101/hello.php");
 
             HttpResponse response = httpClient.execute(httpPost);
 
@@ -67,10 +67,15 @@ class BackgroundTask extends AsyncTask <String,Void,String> {
             StringBuilder sb = new StringBuilder();
 
             String line = null;
-            while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null)
+            {
                 sb.append(line + "\n");
             }
             result = sb.toString();
+            reader.close();
+            is.close();
+
+
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
@@ -78,16 +83,15 @@ class BackgroundTask extends AsyncTask <String,Void,String> {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return result;
+
     }
 
     @Override
     protected void onPostExecute(String result) {
         String s = result.trim();
-        loadingDialog.dismiss();
-        if (s.equalsIgnoreCase("success")) {
+        //Toast.makeText(context,result,Toast.LENGTH_LONG).show();
 
-        } else {
-        }
     }
 }
