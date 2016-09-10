@@ -35,25 +35,23 @@ public class Registration extends Activity {
     }
 
 
-    public void registration(View v) {
+    public void loginPage(View v) {
 
 
 
-        Intent i = new Intent(Registration.this, Login.class);
+        Intent i = new Intent(Registration.this, LoginPage.class);
         startActivity(i);
         finish();
     }
 
     public void register(View v) {
 
-        BackgroundTask bt=new BackgroundTask(getApplicationContext());
+       AsyncData asyncData= new AsyncData(getApplicationContext());
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
         String cpassword = etCpassword.getText().toString();
         String email = etEmail.getText().toString();
-        bt.execute("register",username,password,email);
-
-
+        asyncData.execute(username,password,email,"http://dhoondlee.com/darshanjain/register.php");
 
     }
 

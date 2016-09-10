@@ -28,3 +28,4 @@ dependencies {
 android {
     useLibrary 'org.apache.http.legacy'
 }
+apply plugin: 'com.google.gms.google-services'

@@ -112,6 +112,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="60dp"
         android:layout_marginTop="485dp"
-        android:onClick="registration"
+        android:onClick="loginPage"
         android:text="Already have account?SignIn" />
 </RelativeLayout>

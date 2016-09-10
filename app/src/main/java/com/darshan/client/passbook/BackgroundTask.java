@@ -1,18 +1,8 @@
 package com.darshan.client.passbook;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.widget.Toast;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -21,77 +11,76 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.Buffer;
 
-/**
- * Created by DARSHAN on 04-09-2016.
- */
-class BackgroundTask extends AsyncTask <String,Void,String> {
-
-    Context context;
-    private Dialog loadingDialog;
+public class BackgroundTask extends AsyncTask<String, Void, String> {
+    Context ctx;
 
     BackgroundTask(Context ctx) {
-        context = ctx;
-    }
+        this.ctx = ctx;
 
+    }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        loadingDialog = ProgressDialog.show(context, "Please wait", "Loading...");
     }
 
     @Override
     protected String doInBackground(String... params) {
-        String uname = params[0];
-        String pass = params[1];
-        InputStream is = null;
-        String result="";
-        try{
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost("http://192.168.1.101/hello.php");
 
-            HttpResponse response = httpClient.execute(httpPost);
 
-            HttpEntity entity = response.getEntity();
+            String username = params[1];
+            String password = params[2];
+            String email = params[3];
 
-            is = entity.getContent();
+            try {
+                URL url = new URL(params[4]);
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"), 8);
-            StringBuilder sb = new StringBuilder();
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoOutput(true);
+                OutputStream os = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os));
 
-            String line = null;
-            while ((line = reader.readLine()) != null)
-            {
-                sb.append(line + "\n");
+                String data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8") + "&" +
+                        URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8") + "&" +
+                        URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8");
+                bufferedWriter.flush();
+                bufferedWriter.write(data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                os.close();
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                inputStream.close();
+
+
+                return "Added Succesfully";
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            result = sb.toString();
-            reader.close();
 
 
 
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        return result;
 
+        return "something went wrong!!! please try again";
     }
 
     @Override
     protected void onPostExecute(String result) {
-        String s = result.trim();
-        //Toast.makeText(context,result,Toast.LENGTH_LONG).show();
+        Toast.makeText(ctx, result, Toast.LENGTH_LONG).show();
 
+        super.onPostExecute(result);
     }
+
+
 }
