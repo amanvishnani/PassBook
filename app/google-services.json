@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "510082695995",
+    "firebase_url": "https://passbook-85bae.firebaseio.com",
+    "project_id": "passbook-85bae",
+    "storage_bucket": "passbook-85bae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:510082695995:android:e7f86b6a475a4cb0",
+        "android_client_info": {
+          "package_name": "com.darshan.client.passbook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "510082695995-73di3ht07imbrj37jo4u8vj2s4equ3vv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.darshan.client.passbook",
+            "certificate_hash": "A4C8323D8A1FBFA6E8DA100AB460B46BF354D9BD"
+          }
+        },
+        {
+          "client_id": "510082695995-uo3n5aine7ingj6vaos4v5t076nl64jc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAguI3H5F74dHUAOY4ppBNVc1DsnKK-kYs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "510082695995-uo3n5aine7ingj6vaos4v5t076nl64jc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
