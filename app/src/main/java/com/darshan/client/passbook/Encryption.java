@@ -3,6 +3,7 @@ package com.darshan.client.passbook;
 import android.widget.Toast;
 
 import java.security.Key;
+import java.security.MessageDigest;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -14,28 +15,43 @@ public class Encryption {
     String key;
     String encryptedString;
 
-    public void generateKey(String keys) {
-
-        this.key="1aa13f560k98uu6v";
-    }
-
-
-    public String encrypt(String data) {
-        String encryptedText = "";
+    public StringBuffer sha256(String base) {
         try {
-            String text = data;
-            Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-            Cipher cipher = Cipher.getInstance("AES");
-            // encrypt the text
-            cipher.init(Cipher.ENCRYPT_MODE, aesKey);
-            byte[] encrypted = cipher.doFinal(text.getBytes());
-            System.out.println("encryptied " + String.valueOf(encrypted));
-            encryptedText = encrypted.toString();
-        } catch (Exception e) {
-            return e + "";
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(base.getBytes("UTF-8"));
+            StringBuffer hexString = new StringBuffer();
+
+            for (int i = 0; i < hash.length; i++) {
+                String hex = Integer.toHexString(0xff & hash[i]);
+                //  System.out.println(hex);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+
+            return hexString;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
 
-
-        return encryptedText;
     }
+    public String encryptData(String base)
+    {
+
+        try{
+            StringBuffer sb=sha256("Darshan");
+            String key=sb.toString().substring(0,15);
+            Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+            byte[] encrypted = cipher.doFinal(base.getBytes());
+            return String.valueOf(encrypted);
+
+
+        }
+        catch(Exception e) {
+           return e+"";
+        }
+    }
+
+
 }

@@ -32,53 +32,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void eData(View v)
-    {try {
-        String text=etText.getText().toString();
-        String key=etKey.getText().toString();
-
-        Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-        Cipher cipher = Cipher.getInstance("AES");
-
-
-
-        // encrypt the text
-
-        cipher.init(Cipher.ENCRYPT_MODE, aesKey);
-
-        byte[] encrypted = cipher.doFinal(text.getBytes());
-        System.out.println("encryptied "+String.valueOf(encrypted));
-        etText.setText(" "+encrypted);
-
-    }
-    catch (Exception e) {
-
-        Toast.makeText(getApplicationContext()," "+e,Toast.LENGTH_LONG).show();
-
-    }
-
-
+    {
+        Encryption e=new Encryption();
+        String cipherText=e.encryptData(etText.getText().toString());
+        etText.setText(cipherText);
     }
 
     public void dData(View v)
     {
-        String text=etText.getText().toString();
-        String key=etKey.getText().toString();
 
-        try {
-            byte [] encrypted=text.getBytes();
-            Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, aesKey);
-            String decrypted = new String(cipher.doFinal(encrypted));
-
-            etText.setText(" "+decrypted);
-
-        }
-        catch (Exception e)
-        {
-            Toast.makeText(getApplicationContext()," "+e,Toast.LENGTH_LONG).show();
-
-        }
     }
 
 }

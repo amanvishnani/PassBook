@@ -133,7 +133,6 @@ public class LoginPage extends Activity{
         protected void onPostExecute(String aVoid) {
 
             super.onPostExecute(aVoid);
-            Toast.makeText(getApplicationContext(),aVoid,Toast.LENGTH_LONG).show();
 
              if(aVoid.equals("done"))
             {
@@ -141,6 +140,8 @@ public class LoginPage extends Activity{
                 Intent i=new Intent(LoginPage.this,HomePage.class);
                 startActivity(i);
                 finish();
+                Toast.makeText(getApplicationContext(),"WELCOME!!!",Toast.LENGTH_LONG).show();
+
             }
             else
             {

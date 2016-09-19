@@ -6,6 +6,7 @@
     >
 
 <LinearLayout
+
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="wrap_content">
@@ -60,24 +61,46 @@
         android:lines="1"
         android:maxLength="10"
         android:textSize="20dp" />
-    <Button
-        android:background="#5a9ae7"
-        android:layout_width="90dp"
-        android:layout_height="40dp"
-        android:textColorHighlight="#5a9ae7"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        android:text="Store"
-android:onClick="sendData"
-        android:textColor="#ffffff"
-        android:textStyle="bold"
-        android:fontFamily="monospace"
-        android:layout_marginLeft="250dp"
-        android:layout_marginTop="20dp"
-        android:id="@+id/btnLogin"
-        android:layout_below="@+id/etPassword"
-        />
+        <Button
+            android:background="#5a9ae7"
+            android:layout_width="90dp"
+            android:layout_height="40dp"
+            android:textColorHighlight="#5a9ae7"
 
-</LinearLayout>
+            android:text="Show"
+            android:onClick="showList"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:fontFamily="monospace"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="20dp"
+            android:id="@+id/btnShow"
+            android:layout_below="@+id/etPassword"
+            />
+
+        <Button
+            android:background="#5a9ae7"
+            android:layout_width="90dp"
+            android:layout_height="40dp"
+            android:textColorHighlight="#5a9ae7"
+
+            android:text="Store"
+            android:onClick="sendData"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:fontFamily="monospace"
+            android:layout_marginLeft="110dp"
+            android:layout_marginTop="20dp"
+            android:id="@+id/btnLogin"
+            android:layout_below="@+id/etPassword"
+            />
+
+    </LinearLayout>
+    </LinearLayout>
 
     <ListView
         android:layout_width="match_parent"
