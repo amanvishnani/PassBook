@@ -1,6 +1,7 @@
 package com.darshan.client.passbook;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.scottyab.aescrypt.AESCrypt;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,64 +30,123 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
 /**
  * Created by DARSHAN on 10-09-2016.
  */
 public class HomePage extends Activity {
-    EditText etService,etEmail,etPassword;
-   ArrayList <User> arrayList;
+    EditText etService, etEmail, etPassword;
+    ArrayList<User> arrayList;
     ListView lv;
-
+    String username;
     User user;
+String res;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        etService= (EditText) findViewById(R.id.etService);
-        etEmail= (EditText) findViewById(R.id.etEmail);
-        etPassword= (EditText) findViewById(R.id.etPassword);
+        etService = (EditText) findViewById(R.id.etService);
+        etEmail = (EditText) findViewById(R.id.etEmail);
+        etPassword = (EditText) findViewById(R.id.etPassword);
+        username = Username.USERNAME;
+
+
 
     }
 
+    public void sendData(View v) {
 
-    public void sendData(View view)
-    {
-        String service=etService.getText().toString();
-        String email=etEmail.getText().toString();
-        String password=etPassword.getText().toString();
-        String username=Username.USERNAME;
-        AsyncSend asyncSend=new AsyncSend();
-        asyncSend.execute("entry",service,email,password,username,"http://dhoondlee.com/darshanjain/dataEnter.php");
+        String service = etService.getText().toString();
+        String email = etEmail.getText().toString();
+        String password = etPassword.getText().toString();
+
+        try {
+            String encryptedService = AESCrypt.encrypt(username,service);
+            String encryptedEmail = AESCrypt.encrypt(username,email);
+            String encryptedPassword = AESCrypt.encrypt(username,password);
+            AsyncSend asyncSend = new AsyncSend();
+            asyncSend.execute("entry", encryptedService,encryptedEmail, encryptedPassword, username, "http://dhoondlee.com/darshanjain/dataEnter.php");
+
+
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
-    public void showList(View v)
-    {
-        lv= (ListView) findViewById(R.id.lvData);
-        arrayList=new ArrayList<User>();
-        AsyncSend asyncSend1=new AsyncSend();
+    public void showList(View v) {
+
+        AsyncSend asyncSend1 = new AsyncSend();
         asyncSend1.execute("list");
 
+
     }
 
+    private void insertUserDetailInArrayList(String JsonString) {
 
-    private class AsyncSend extends AsyncTask<String,Void,String>{
+        try {
+            JSONObject jsonObject = new JSONObject(JsonString);
+            JSONArray jsonArray = jsonObject.getJSONArray("login");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+                String serviceprovider = jsonObject1.getString("serviceProvider");
+                String email = jsonObject1.getString("email");
+                String password = jsonObject1.getString("password");
+                String decryptedServiceProvider,decryptedEmail,decryptedPassword;
+
+                try {
+                    decryptedServiceProvider=AESCrypt.decrypt(Username.USERNAME,serviceprovider);
+                    decryptedEmail=AESCrypt.decrypt(Username.USERNAME,email);
+                    decryptedPassword=AESCrypt.decrypt(Username.USERNAME,password);
+                    user = new User();
+                    user.setServiceProvider(decryptedServiceProvider);
+                    user.setEmail(decryptedEmail);
+                    user.setPassword(decryptedPassword);
+                    arrayList.add(user);
+                } catch (GeneralSecurityException e) {
+                    e.printStackTrace();
+                }
+
+
+
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private class AsyncSend extends AsyncTask<String, Void, String> {
         String err;
         String type;
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog=new ProgressDialog(HomePage.this);
+            progressDialog.setMessage("Loading...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
         @Override
         protected String doInBackground(String... strings) {
 
-            String result="",line;
+            String result = "", line;
             try {
-                type=strings[0];
+                type = strings[0];
 
-                if(type.equals("entry")) {
+                if (type.equals("entry")) {
                     String service = strings[1];
                     String email = strings[2];
-                    String password=strings[3];
-                    String username=strings[4];
-
+                    String password = strings[3];
+                    String username = strings[4];
                     URL url = new URL(strings[5]);
                     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                     httpURLConnection.setRequestMethod("POST");
@@ -115,8 +177,7 @@ public class HomePage extends Activity {
                 }
 
 
-                if(type.equals("list"))
-                {
+                if (type.equals("list")) {
                     URL url = new URL("http://dhoondlee.com/darshanjain/JsonList.php");
                     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                     httpURLConnection.setRequestMethod("POST");
@@ -124,7 +185,7 @@ public class HomePage extends Activity {
                     httpURLConnection.setDoInput(true);
                     OutputStream os = httpURLConnection.getOutputStream();
                     BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os));
-                    String data =URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(Username.USERNAME, "UTF-8");
+                    String data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(Username.USERNAME, "UTF-8");
                     bufferedWriter.flush();
                     bufferedWriter.write(data);
                     bufferedWriter.flush();
@@ -138,21 +199,8 @@ public class HomePage extends Activity {
 
                     }
                     inputStream.close();
-
                     return result;
-
-
-
                 }
-
-
-
-
-
-
-
-
-
 
             } catch (UnsupportedEncodingException e) {
                 err = err + e;
@@ -168,57 +216,28 @@ public class HomePage extends Activity {
                 e.printStackTrace();
             }
 
-            return "something went wrong"+err;
+            return "something went wrong" + err;
 
         }
 
         @Override
         protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+            progressDialog.dismiss();
 
-            if(type.equals("list"))
-            {
-
+            if (type.equals("list")) {
+                lv = (ListView) findViewById(R.id.lvData);
+                arrayList = new ArrayList<User>();
                 insertUserDetailInArrayList(s);
-                UserAdapter userAdapter=new UserAdapter(getApplicationContext(),arrayList);
+                UserAdapter userAdapter = new UserAdapter(getApplicationContext(), arrayList);
                 lv.setAdapter(userAdapter);
             }
 
         }
-        private void insertUserDetailInArrayList(String JsonString) {
 
-            try {
-                JSONObject jsonObject=new JSONObject(JsonString);
-                JSONArray jsonArray=jsonObject.getJSONArray("login");
-                for(int i=0;i<jsonArray.length();i++)
-                {
-                    JSONObject jsonObject1=jsonArray.getJSONObject(i);
-                    String serviceprovider=jsonObject1.getString("serviceProvider");
-                    String email=jsonObject1.getString("email");
-                    String password=jsonObject1.getString("password");
-
-
-                    user=new User();
-                    user.setServiceProvider(serviceprovider);
-                    user.setEmail(email);
-                    user.setPassword(password);
-                    arrayList.add(user);
-
-
-                }
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-
-
-        }
 
     }
-    private boolean isOnline(){
+
+    private boolean isOnline() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();

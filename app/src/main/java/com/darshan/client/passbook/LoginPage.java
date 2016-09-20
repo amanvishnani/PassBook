@@ -1,8 +1,11 @@
 package com.darshan.client.passbook;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -28,7 +31,7 @@ import java.net.URLEncoder;
 /**
  * Created by DARSHAN on 10-09-2016.
  */
-public class LoginPage extends Activity{
+public class LoginPage extends Activity {
     EditText etUsername, etPassword;
     TextView tvRegistration;
     Button btnLogin;
@@ -49,18 +52,27 @@ public class LoginPage extends Activity{
         btnLogin = (Button) findViewById(R.id.btnLogin);
 
     }
-    public void login(View v)
-    {
-        String username=etUsername.getText().toString();
-        String password=etPassword.getText().toString();
-        AsyncLogin asyncLogin=new AsyncLogin();
-        asyncLogin.execute(username,password,"http://dhoondlee.com/darshanjain/login.php");
 
+    private boolean isOnline() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void registration(View v)
-    {
-        Intent i=new Intent(LoginPage.this,Registration.class);
+    public void login(View v) {
+        String username = etUsername.getText().toString();
+        String password = etPassword.getText().toString();
+        AsyncLogin asyncLogin = new AsyncLogin();
+        if (isOnline()) {
+            asyncLogin.execute(username, password, "http://dhoondlee.com/darshanjain/login.php");
+        } else {
+            Toast.makeText(getApplicationContext(), "No Internet Connection!!!!", Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+    public void registration(View v) {
+        Intent i = new Intent(LoginPage.this, Registration.class);
         startActivity(i);
         finish();
     }
@@ -68,23 +80,25 @@ public class LoginPage extends Activity{
 
     public class AsyncLogin extends AsyncTask<String, Void, String> {
 
-        String err="";
-
+        String err = "";
         String username;
         String password;
+        ProgressDialog pd;
 
         @Override
         protected void onPreExecute() {
-            super.onPreExecute();
-
-
+            pd=new ProgressDialog(LoginPage.this);
+            pd.setMessage("Loading...");
+            pd.show();
+            pd.setCancelable(false);
         }
+
+
         @Override
         protected String doInBackground(String... strings) {
-
-            String result="",line;
+            String result = "", line;
             try {
-                 username= strings[0];
+                username = strings[0];
                 password = strings[1];
                 URL url = new URL(strings[2]);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -126,46 +140,31 @@ public class LoginPage extends Activity{
                 e.printStackTrace();
             }
 
-            return "something went wrong"+err;
+            return "something went wrong" + err;
         }
 
         @Override
         protected void onPostExecute(String aVoid) {
 
-            super.onPostExecute(aVoid);
 
-             if(aVoid.equals("done"))
-            {
-                Username.USERNAME=username;
-                Intent i=new Intent(LoginPage.this,HomePage.class);
+            if (aVoid.equals("done")) {
+                Username.USERNAME = username;
+                Intent i = new Intent(LoginPage.this, HomePage.class);
                 startActivity(i);
                 finish();
-                Toast.makeText(getApplicationContext(),"WELCOME!!!",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "WELCOME!!!", Toast.LENGTH_LONG).show();
+                pd.dismiss();
 
+            } else {
+                Toast.makeText(getApplicationContext(), "INVALID USERNAME OR PASSWORD... RETRY!!!", Toast.LENGTH_LONG).show();
+                pd.dismiss();
             }
-            else
-            {
-                Toast.makeText(getApplicationContext(),"INVALID USERNAME OR PASSWORD... RETRY!!!",Toast.LENGTH_LONG).show();
-            }
-
 
 
         }
 
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

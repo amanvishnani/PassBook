@@ -33,9 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void eData(View v)
     {
-        Encryption e=new Encryption();
-        String cipherText=e.encryptData(etText.getText().toString());
-        etText.setText(cipherText);
+
     }
 
     public void dData(View v)

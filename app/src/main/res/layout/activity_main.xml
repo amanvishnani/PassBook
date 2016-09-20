@@ -11,7 +11,7 @@
         android:layout_marginTop="30dp"
         android:hint="Text"
         android:id="@+id/etText"
-                android:background="@drawable/border"
+        android:background="@drawable/border"
         android:typeface="monospace"
         android:textColorLink="#1a3fc3" />
 

@@ -40,6 +40,7 @@
 
 
     <EditText
+        android:singleLine="true"
         android:textColorHint="#000000"
         android:id="@+id/etUsername"
         android:layout_width="match_parent"
@@ -56,6 +57,7 @@
         android:textSize="20dp" />
 
     <EditText
+        android:singleLine="true"
         android:maxLines="1"
         android:id="@+id/etPassword"
         android:layout_width="match_parent"
