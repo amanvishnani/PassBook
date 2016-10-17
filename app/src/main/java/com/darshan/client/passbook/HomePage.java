@@ -2,6 +2,8 @@ package com.darshan.client.passbook;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -42,7 +44,8 @@ public class HomePage extends Activity {
     ListView lv;
     String username;
     User user;
-String res;
+    String res;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,8 +54,36 @@ String res;
         etEmail = (EditText) findViewById(R.id.etEmail);
         etPassword = (EditText) findViewById(R.id.etPassword);
         username = Username.USERNAME;
+        checkQueue();
+
+    }
+
+    private void checkQueue() {
+        DatabaseHelper dbh = new DatabaseHelper(getApplicationContext());
+        if (isOnline() && !(dbh.isEmpty())) {
+            SQLiteDatabase db = dbh.getReadableDatabase();
+            Cursor cursor = db.rawQuery("select * from data", null);
+            while (cursor.moveToNext()) {
+
+                String username = cursor.getString(cursor.getColumnIndex("username"));
+                String serviceProvider = cursor.getString(cursor.getColumnIndex("serviceprovider"));
+                String email = cursor.getString(cursor.getColumnIndex("email"));
+                String password = cursor.getString(cursor.getColumnIndex("password"));
+                try {
+                    String encryptedService = AESCrypt.encrypt(username, serviceProvider);
+                    String encryptedEmail = AESCrypt.encrypt(username, email);
+                    String encryptedPassword = AESCrypt.encrypt(username, password);
+                    AsyncSend asyncSend = new AsyncSend();
+                    asyncSend.execute("entry", encryptedService, encryptedEmail, encryptedPassword, username, "http://dhoondlee.com/darshanjain/dataEnter.php");
+
+                } catch (GeneralSecurityException e) {
+                    e.printStackTrace();
+                }
+            }
+            dbh.deleteData();
 
 
+        }
 
     }
 
@@ -62,19 +93,29 @@ String res;
         String email = etEmail.getText().toString();
         String password = etPassword.getText().toString();
 
-        try {
-            String encryptedService = AESCrypt.encrypt(username,service);
-            String encryptedEmail = AESCrypt.encrypt(username,email);
-            String encryptedPassword = AESCrypt.encrypt(username,password);
-            AsyncSend asyncSend = new AsyncSend();
-            asyncSend.execute("entry", encryptedService,encryptedEmail, encryptedPassword, username, "http://dhoondlee.com/darshanjain/dataEnter.php");
+        if(isOnline()) {
+
+            try {
+                String encryptedService = AESCrypt.encrypt(username, service);
+                String encryptedEmail = AESCrypt.encrypt(username, email);
+                String encryptedPassword = AESCrypt.encrypt(username, password);
+                AsyncSend asyncSend = new AsyncSend();
+                asyncSend.execute("entry", encryptedService, encryptedEmail, encryptedPassword, username, "http://dhoondlee.com/darshanjain/dataEnter.php");
 
 
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
+            } catch (GeneralSecurityException e) {
+                e.printStackTrace();
+            }
         }
-
-
+        else
+        {
+            DatabaseHelper dbh=new DatabaseHelper(getApplicationContext());
+           long id= dbh.insertData(Username.USERNAME,service,email,password);
+            if(id!=-1)
+            {
+                Toast.makeText(this, "No Internet Conncetion!!! Data Stored in local", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     public void showList(View v) {
@@ -95,12 +136,12 @@ String res;
                 String serviceprovider = jsonObject1.getString("serviceProvider");
                 String email = jsonObject1.getString("email");
                 String password = jsonObject1.getString("password");
-                String decryptedServiceProvider,decryptedEmail,decryptedPassword;
+                String decryptedServiceProvider, decryptedEmail, decryptedPassword;
 
                 try {
-                    decryptedServiceProvider=AESCrypt.decrypt(Username.USERNAME,serviceprovider);
-                    decryptedEmail=AESCrypt.decrypt(Username.USERNAME,email);
-                    decryptedPassword=AESCrypt.decrypt(Username.USERNAME,password);
+                    decryptedServiceProvider = AESCrypt.decrypt(Username.USERNAME, serviceprovider);
+                    decryptedEmail = AESCrypt.decrypt(Username.USERNAME, email);
+                    decryptedPassword = AESCrypt.decrypt(Username.USERNAME, password);
                     user = new User();
                     user.setServiceProvider(decryptedServiceProvider);
                     user.setEmail(decryptedEmail);
@@ -109,7 +150,6 @@ String res;
                 } catch (GeneralSecurityException e) {
                     e.printStackTrace();
                 }
-
 
 
             }
@@ -122,6 +162,13 @@ String res;
 
     }
 
+    private boolean isOnline() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
     private class AsyncSend extends AsyncTask<String, Void, String> {
         String err;
         String type;
@@ -129,7 +176,7 @@ String res;
 
         @Override
         protected void onPreExecute() {
-            progressDialog=new ProgressDialog(HomePage.this);
+            progressDialog = new ProgressDialog(HomePage.this);
             progressDialog.setMessage("Loading...");
             progressDialog.setCancelable(false);
             progressDialog.show();
@@ -235,13 +282,6 @@ String res;
         }
 
 
-    }
-
-    private boolean isOnline() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 }
